@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sube tu foto</title>
+</head>
+<body>
+
+  <h2>📸 Sube tu foto al álbum</h2>
+
+  <input type="file" id="archivo" accept="image/*">
+
+  <br><br>
+
+  <button onclick="subirFoto()">Subir foto</button>
+
+  <br><br>
+
+  <p id="mensaje">Elige una foto y pulsa subir</p>
+
+  <script>
+    function subirFoto() {
+      let archivo = document.getElementById("archivo").files[0];
+
+      if (!archivo) {
+        document.getElementById("mensaje").innerText = "⚠️ Primero elige una foto";
+        return;
+      }
+
+      document.getElementById("mensaje").innerText = "⏳ Subiendo...";
+
+      let datos = new FormData();
+      datos.append("file", archivo);
+      datos.append("upload_preset", "gianna");
+
+      fetch("https://api.cloudinary.com/v1_1/dc39zjuoi/image/upload", {
+        method: "POST",
+        body: datos
+      })
+      .then(respuesta => respuesta.json())
+      .then(resultado => {
+        document.getElementById("mensaje").innerText = "✅ Foto subida. ¡Gracias!";
+      })
+      .catch(error => {
+        document.getElementById("mensaje").innerText = "❌ Error al subir";
+      });
+    }
+  </script>
+
+</body>
+</html>
