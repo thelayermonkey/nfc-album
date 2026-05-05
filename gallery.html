@@ -12,9 +12,7 @@
       padding: 20px;
       text-align: center;
     }
-    h1 {
-      color: #333;
-    }
+    h1 { color: #333; }
     #galeria {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -25,10 +23,35 @@
       width: 100%;
       border-radius: 10px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      cursor: pointer;
+      transition: transform 0.2s;
     }
-    #mensaje {
-      color: #888;
-      margin-top: 40px;
+    #galeria img:hover { transform: scale(1.03); }
+    #mensaje { color: #888; margin-top: 40px; }
+
+    /* Lightbox */
+    #lightbox {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.9);
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+    }
+    #lightbox.activo { display: flex; }
+    #lightbox img {
+      max-width: 90%;
+      max-height: 90%;
+      border-radius: 8px;
+    }
+    #cerrar {
+      position: fixed;
+      top: 20px; right: 30px;
+      color: white;
+      font-size: 40px;
+      cursor: pointer;
     }
   </style>
 </head>
@@ -36,6 +59,11 @@
   <h1>📸 Álbum del evento</h1>
   <div id="galeria"></div>
   <p id="mensaje">Cargando fotos...</p>
+
+  <div id="lightbox">
+    <span id="cerrar">&times;</span>
+    <img id="lightbox-img" src="" alt="Foto ampliada">
+  </div>
 
   <script>
     fetch('/api/photos')
@@ -54,12 +82,28 @@
           const img = document.createElement('img');
           img.src = foto.secure_url;
           img.alt = 'Foto del evento';
+          img.onclick = () => abrirLightbox(foto.secure_url);
           galeria.appendChild(img);
         });
       })
       .catch(() => {
         document.getElementById('mensaje').textContent = 'Error cargando las fotos.';
       });
+
+    function abrirLightbox(url) {
+      document.getElementById('lightbox-img').src = url;
+      document.getElementById('lightbox').classList.add('activo');
+    }
+
+    document.getElementById('cerrar').onclick = () => {
+      document.getElementById('lightbox').classList.remove('activo');
+    };
+
+    document.getElementById('lightbox').onclick = (e) => {
+      if (e.target === document.getElementById('lightbox')) {
+        document.getElementById('lightbox').classList.remove('activo');
+      }
+    };
   </script>
 </body>
 </html>
