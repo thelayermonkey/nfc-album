@@ -3,48 +3,408 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sube tu foto</title>
+  <title>Comunión de Gianna · 2026</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Lato:wght@300;400&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      min-height: 100vh;
+      background-color: #FDF5F7;
+      background-image:
+        radial-gradient(ellipse at top left, rgba(232, 176, 200, 0.25) 0%, transparent 55%),
+        radial-gradient(ellipse at bottom right, rgba(232, 176, 200, 0.2) 0%, transparent 55%);
+      font-family: 'Lato', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 44px 20px 64px;
+    }
+
+    .top-decoration {
+      width: 100%;
+      max-width: 380px;
+      text-align: center;
+    }
+
+    .subtitle {
+      font-family: 'Lato', sans-serif;
+      font-weight: 300;
+      font-size: 11px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: #B87494;
+      margin-top: 12px;
+    }
+
+    .name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 58px;
+      font-weight: 300;
+      color: #7A2E4B;
+      line-height: 1.05;
+      font-style: italic;
+      margin-top: 4px;
+    }
+
+    .surname {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 19px;
+      font-weight: 400;
+      color: #B87494;
+      letter-spacing: 3px;
+      margin-top: 6px;
+    }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin: 14px auto;
+    }
+
+    .divider-line {
+      height: 0.5px;
+      width: 56px;
+      background: linear-gradient(to right, transparent, #C97D9A);
+    }
+    .divider-line.r {
+      background: linear-gradient(to left, transparent, #C97D9A);
+    }
+
+    .date {
+      font-family: 'Lato', sans-serif;
+      font-weight: 300;
+      font-size: 11px;
+      letter-spacing: 4px;
+      color: #C8A8BC;
+      margin-top: 4px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 22px;
+      padding: 36px 28px 40px;
+      width: 100%;
+      max-width: 380px;
+      box-shadow:
+        0 4px 24px rgba(180, 80, 120, 0.08),
+        0 1px 4px rgba(180, 80, 120, 0.06);
+      margin-top: 28px;
+      text-align: center;
+    }
+
+    .card-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 26px;
+      font-weight: 400;
+      color: #7A2E4B;
+      margin-bottom: 6px;
+    }
+
+    .card-desc {
+      font-size: 13px;
+      font-weight: 300;
+      color: #BF8FAA;
+      line-height: 1.7;
+      margin-bottom: 28px;
+    }
+
+    .upload-area {
+      border: 1.5px dashed #E8B0C8;
+      border-radius: 16px;
+      padding: 36px 20px;
+      cursor: pointer;
+      transition: border-color 0.25s, background 0.25s;
+      background: #FEF8FA;
+      margin-bottom: 20px;
+      position: relative;
+    }
+
+    .upload-area:hover {
+      border-color: #C97D9A;
+      background: #FDF2F5;
+    }
+
+    .upload-area.has-file {
+      border-style: solid;
+      border-color: #C97D9A;
+      background: #FDF2F5;
+    }
+
+    .upload-icon { margin-bottom: 12px; }
+
+    .upload-label {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 20px;
+      color: #A05070;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .upload-hint {
+      font-size: 11px;
+      color: #CCA8BC;
+      font-weight: 300;
+      letter-spacing: 0.5px;
+    }
+
+    input[type="file"] { display: none; }
+
+    .preview-container {
+      display: none;
+      margin-top: 14px;
+    }
+
+    .preview-img {
+      width: 88px;
+      height: 88px;
+      object-fit: cover;
+      border-radius: 12px;
+      border: 2px solid #F0C0D4;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, #C97D9A 0%, #9E4A6A 100%);
+      color: white;
+      border: none;
+      border-radius: 50px;
+      font-family: 'Lato', sans-serif;
+      font-size: 11px;
+      font-weight: 400;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: transform 0.25s, box-shadow 0.25s, opacity 0.25s;
+    }
+
+    .btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 28px rgba(158, 74, 106, 0.35);
+    }
+
+    .btn:active:not(:disabled) {
+      transform: translateY(0);
+    }
+
+    .btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 3px;
+      background: #F0D4E0;
+      border-radius: 2px;
+      margin-top: 18px;
+      overflow: hidden;
+      display: none;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(to right, #E8B0C8, #C97D9A);
+      border-radius: 2px;
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    .mensaje {
+      margin-top: 18px;
+      font-size: 13px;
+      color: #BF8FAA;
+      font-weight: 300;
+      min-height: 20px;
+      line-height: 1.6;
+    }
+
+    .mensaje.exito {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 19px;
+      color: #7A2E4B;
+      font-style: italic;
+    }
+
+    .mensaje.error {
+      color: #C0606060;
+    }
+
+    .footer-text {
+      margin-top: 36px;
+      font-size: 10px;
+      color: #D8B8CC;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+  </style>
 </head>
 <body>
 
-  <h2>📸 Sube tu foto al álbum</h2>
+  <div class="top-decoration">
 
-  <input type="file" id="archivo" accept="image/*">
+    <!-- Flores y cruz SVG -->
+    <svg width="280" height="110" viewBox="0 0 280 110" fill="none" xmlns="http://www.w3.org/2000/svg">
 
-  <br><br>
 
-  <button onclick="subirFoto()">Subir foto</button>
+      <!-- OSTIA (host) -->
+      <circle cx="140" cy="13" r="12" fill="#EDD8E8" opacity="0.9"/>
+      <circle cx="140" cy="13" r="9" fill="#F4E4EE" opacity="0.7"/>
+      <circle cx="140" cy="13" r="6" fill="#EDD0DE" opacity="0.5"/>
+      <!-- Pequeña cruz en la ostia -->
+      <path d="M140 7 L140 19" stroke="#C897B4" stroke-width="1.3" stroke-linecap="round" opacity="0.8"/>
+      <path d="M134 13 L146 13" stroke="#C897B4" stroke-width="1.3" stroke-linecap="round" opacity="0.8"/>
+      <!-- Puntos decorativos alrededor de la ostia -->
+      <circle cx="128" cy="13" r="1.5" fill="#D8B0C8" opacity="0.5"/>
+      <circle cx="152" cy="13" r="1.5" fill="#D8B0C8" opacity="0.5"/>
+      <circle cx="140" cy="2"  r="1.5" fill="#D8B0C8" opacity="0.5"/>
 
-  <br><br>
+      <!-- CÁLIZ — boca/borde -->
+      <rect x="122" y="26" width="36" height="5" rx="2.5" fill="#D494B4" opacity="0.85"/>
+      <!-- Cáliz — copa (trapecio que se estrecha hacia abajo) -->
+      <path d="M124 31 L156 31 L149 54 Q140 58 131 54 Z" fill="#E0A8C4" opacity="0.8"/>
+      <!-- Brillo interior copa -->
+      <path d="M128 32 Q126 42 129 52" stroke="#F4D8E8" stroke-width="2.5" stroke-linecap="round" opacity="0.55"/>
+      <!-- Nudo/nodo del tallo -->
+      <ellipse cx="140" cy="57" rx="5" ry="3.5" fill="#D494B4" opacity="0.85"/>
+      <!-- Tallo -->
+      <rect x="138" y="54" width="4" height="14" rx="1.5" fill="#D494B4" opacity="0.8"/>
+      <!-- Base del cáliz -->
+      <path d="M126 68 Q140 73 154 68 L154 64 Q140 69 126 64 Z" fill="#D494B4" opacity="0.75"/>
+      <rect x="126" y="63" width="28" height="5" rx="2.5" fill="#D494B4" opacity="0.85"/>
+    </svg>
 
-  <p id="mensaje">Elige una foto y pulsa subir</p>
+    <p class="subtitle">Primera Comunión</p>
+    <h1 class="name">Gianna</h1>
+    <p class="surname">Pazos Benedetti</p>
+
+    <div class="divider">
+      <div class="divider-line"></div>
+      <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+        <circle cx="5" cy="5" r="3" fill="#C97D9A"/>
+        <circle cx="5" cy="5" r="1.5" fill="#F0C8D8"/>
+      </svg>
+      <div class="divider-line r"></div>
+    </div>
+
+    <p class="date">16 · Mayo · 2026</p>
+  </div>
+
+  <!-- Tarjeta de subida -->
+  <div class="card">
+    <h2 class="card-title">Comparte tu foto</h2>
+    <p class="card-desc">Añade un recuerdo especial<br>al álbum del día de Gianna</p>
+
+    <div class="upload-area" id="uploadArea" onclick="document.getElementById('archivo').click()">
+      <div class="upload-icon">
+        <svg width="44" height="44" viewBox="0 0 44 44" fill="none">
+          <circle cx="22" cy="22" r="22" fill="#FDF2F5"/>
+          <path d="M22 30V14" stroke="#C97D9A" stroke-width="1.6" stroke-linecap="round"/>
+          <path d="M15 21l7-7 7 7" stroke="#C97D9A" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M15 33h14" stroke="#E0B0C4" stroke-width="1.6" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <span class="upload-label">Selecciona una foto</span>
+      <span class="upload-hint">JPG · PNG · HEIC · Máx 10MB</span>
+
+      <div class="preview-container" id="previewContainer">
+        <img id="previewImg" class="preview-img" alt="Vista previa">
+      </div>
+    </div>
+
+    <input type="file" id="archivo" accept="image/*">
+
+    <button class="btn" id="btnSubir" onclick="subirFoto()" disabled>
+      Subir foto
+    </button>
+
+    <div class="progress-bar" id="progressBar">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+
+    <p class="mensaje" id="mensaje"></p>
+  </div>
+
+  <p class="footer-text">Con amor · Gianna 2026</p>
 
   <script>
-    function subirFoto() {
-      let archivo = document.getElementById("archivo").files[0];
+    const input = document.getElementById('archivo');
+    const btn = document.getElementById('btnSubir');
+    const previewContainer = document.getElementById('previewContainer');
+    const previewImg = document.getElementById('previewImg');
+    const uploadArea = document.getElementById('uploadArea');
+    const mensaje = document.getElementById('mensaje');
+    const progressBar = document.getElementById('progressBar');
+    const progressFill = document.getElementById('progressFill');
 
-      if (!archivo) {
-        document.getElementById("mensaje").innerText = "⚠️ Primero elige una foto";
-        return;
+    input.addEventListener('change', function () {
+      const file = this.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        previewImg.src = e.target.result;
+        previewContainer.style.display = 'block';
+        uploadArea.classList.add('has-file');
+      };
+      reader.readAsDataURL(file);
+
+      btn.disabled = false;
+      mensaje.textContent = '';
+      mensaje.className = 'mensaje';
+    });
+
+    async function subirFoto() {
+      const file = input.files[0];
+      if (!file) return;
+
+      btn.disabled = true;
+      btn.textContent = 'Subiendo...';
+      progressBar.style.display = 'block';
+      mensaje.textContent = '';
+
+      let prog = 0;
+      const interval = setInterval(() => {
+        prog = Math.min(prog + Math.random() * 18, 88);
+        progressFill.style.width = prog + '%';
+      }, 200);
+
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('upload_preset', 'gianna');
+
+      try {
+        const res = await fetch('https://api.cloudinary.com/v1_1/dc39zjuoi/image/upload', {
+          method: 'POST',
+          body: formData
+        });
+
+        clearInterval(interval);
+        progressFill.style.width = '100%';
+
+        if (res.ok) {
+          setTimeout(() => {
+            progressBar.style.display = 'none';
+            btn.textContent = '✓  Foto guardada';
+            mensaje.textContent = '🌸 ¡Gracias! Tu recuerdo ya forma parte del álbum de Gianna';
+            mensaje.className = 'mensaje exito';
+          }, 500);
+        } else {
+          throw new Error();
+        }
+      } catch {
+        clearInterval(interval);
+        progressBar.style.display = 'none';
+        btn.disabled = false;
+        btn.textContent = 'Subir foto';
+        mensaje.textContent = 'Algo ha ido mal. Inténtalo de nuevo.';
+        mensaje.className = 'mensaje error';
       }
-
-      document.getElementById("mensaje").innerText = "⏳ Subiendo...";
-
-      let datos = new FormData();
-      datos.append("file", archivo);
-      datos.append("upload_preset", "gianna");
-
-      fetch("https://api.cloudinary.com/v1_1/dc39zjuoi/image/upload", {
-        method: "POST",
-        body: datos
-      })
-      .then(respuesta => respuesta.json())
-      .then(resultado => {
-        document.getElementById("mensaje").innerText = "✅ Foto subida. ¡Gracias!";
-      })
-      .catch(error => {
-        document.getElementById("mensaje").innerText = "❌ Error al subir";
-      });
     }
   </script>
 
