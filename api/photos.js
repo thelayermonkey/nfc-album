@@ -8,7 +8,7 @@ cloudinary.config({
 
 export default async function handler(req, res) {
   const result = await cloudinary.search
-    .expression('folder:dev/test001')
+    .expression('folder:comunion-gianna-2026')
     .sort_by('created_at', 'desc')
     .max_results(50)
     .execute();
