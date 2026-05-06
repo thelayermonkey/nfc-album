@@ -11,7 +11,6 @@
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
-      min-height: 100vh;
       background-color: #FDF5F7;
       background-image:
         radial-gradient(ellipse at top left, rgba(232, 176, 200, 0.25) 0%, transparent 55%),
@@ -20,7 +19,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 24px 20px 28px;
+      padding: 16px 20px 16px;
     }
 
     .top-decoration {
@@ -41,7 +40,7 @@
 
     .name {
       font-family: 'Cormorant Garamond', serif;
-      font-size: 50px;
+      font-size: 44px;
       font-weight: 300;
       color: #7A2E4B;
       line-height: 1.05;
@@ -55,7 +54,7 @@
       font-weight: 400;
       color: #B87494;
       letter-spacing: 3px;
-      margin-top: 6px;
+      margin-top: 2px;
     }
 
     .divider {
@@ -87,13 +86,13 @@
     .card {
       background: white;
       border-radius: 22px;
-      padding: 22px 24px 26px;
+      padding: 16px 22px 20px;
       width: 100%;
       max-width: 380px;
       box-shadow:
         0 4px 24px rgba(180, 80, 120, 0.08),
         0 1px 4px rgba(180, 80, 120, 0.06);
-      margin-top: 16px;
+      margin-top: 12px;
       text-align: center;
     }
 
@@ -110,17 +109,17 @@
       font-weight: 300;
       color: #BF8FAA;
       line-height: 1.7;
-      margin-bottom: 16px;
+      margin-bottom: 10px;
     }
 
     .upload-area {
       border: 1.5px dashed #E8B0C8;
       border-radius: 16px;
-      padding: 22px 16px;
+      padding: 14px 16px;
       cursor: pointer;
       transition: border-color 0.25s, background 0.25s;
       background: #FEF8FA;
-      margin-bottom: 20px;
+      margin-bottom: 12px;
       position: relative;
     }
 
@@ -135,7 +134,7 @@
       background: #FDF2F5;
     }
 
-    .upload-icon { margin-bottom: 12px; }
+    .upload-icon { margin-bottom: 6px; }
 
     .upload-label {
       font-family: 'Cormorant Garamond', serif;
@@ -169,7 +168,7 @@
 
     .btn {
       width: 100%;
-      padding: 16px;
+      padding: 13px;
       background: linear-gradient(135deg, #C97D9A 0%, #9E4A6A 100%);
       color: white;
       border: none;
@@ -216,7 +215,7 @@
     }
 
     .mensaje {
-      margin-top: 18px;
+      margin-top: 12px;
       font-size: 13px;
       color: #BF8FAA;
       font-weight: 300;
@@ -236,7 +235,7 @@
     }
 
     .footer-text {
-      margin-top: 20px;
+      margin-top: 14px;
       font-size: 10px;
       color: #D8B8CC;
       letter-spacing: 2px;
@@ -298,7 +297,7 @@
   <!-- Tarjeta de subida -->
   <div class="card">
     <h2 class="card-title">Comparte tu foto</h2>
-    <p class="card-desc">Añade un recuerdo especial<br>al álbum del día de Gianna</p>
+    <p class="card-desc">Añade un recuerdo especial al álbum del día de Gianna</p>
 
     <div class="upload-area" id="uploadArea" onclick="document.getElementById('archivo').click()">
       <div class="upload-icon">
