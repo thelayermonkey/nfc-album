@@ -3,107 +3,380 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Álbum de fotos</title>
+  <title>Álbum de Gianna · 2026</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Lato:wght@300;400&display=swap" rel="stylesheet">
   <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
     body {
-      font-family: Arial, sans-serif;
-      background: #f5f5f5;
-      margin: 0;
-      padding: 20px;
-      text-align: center;
+      min-height: 100vh;
+      background-color: #FDF5F7;
+      background-image:
+        radial-gradient(ellipse at top left, rgba(232, 176, 200, 0.25) 0%, transparent 55%),
+        radial-gradient(ellipse at bottom right, rgba(232, 176, 200, 0.2) 0%, transparent 55%);
+      font-family: 'Lato', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 44px 16px 64px;
     }
-    h1 { color: #333; }
-    #galeria {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 15px;
-      margin-top: 20px;
-    }
-    #galeria img {
+
+    .top-decoration {
       width: 100%;
-      border-radius: 10px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-      cursor: pointer;
-      transition: transform 0.2s;
+      max-width: 380px;
+      text-align: center;
+      margin-bottom: 28px;
     }
-    #galeria img:hover { transform: scale(1.03); }
-    #mensaje { color: #888; margin-top: 40px; }
+
+    .subtitle {
+      font-family: 'Lato', sans-serif;
+      font-weight: 300;
+      font-size: 11px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: #B87494;
+      margin-top: 12px;
+    }
+
+    .name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 52px;
+      font-weight: 300;
+      color: #7A2E4B;
+      line-height: 1.05;
+      font-style: italic;
+      margin-top: 4px;
+    }
+
+    .album-label {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 20px;
+      font-weight: 400;
+      color: #B87494;
+      letter-spacing: 2px;
+      margin-top: 4px;
+    }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin: 14px auto;
+    }
+
+    .divider-line {
+      height: 0.5px;
+      width: 56px;
+      background: linear-gradient(to right, transparent, #C97D9A);
+    }
+    .divider-line.r {
+      background: linear-gradient(to left, transparent, #C97D9A);
+    }
+
+    .date {
+      font-family: 'Lato', sans-serif;
+      font-weight: 300;
+      font-size: 11px;
+      letter-spacing: 4px;
+      color: #C8A8BC;
+      margin-top: 4px;
+    }
+
+    /* Contador de fotos */
+    .photo-count {
+      font-size: 11px;
+      font-weight: 300;
+      color: #CCA8BC;
+      letter-spacing: 2px;
+      margin-bottom: 20px;
+    }
+
+    /* Grid de fotos */
+    .galeria {
+      width: 100%;
+      max-width: 480px;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+
+    .foto-item {
+      position: relative;
+      border-radius: 14px;
+      overflow: hidden;
+      aspect-ratio: 1;
+      cursor: pointer;
+      box-shadow: 0 2px 12px rgba(180, 80, 120, 0.1);
+      transition: transform 0.25s, box-shadow 0.25s;
+    }
+
+    .foto-item:hover {
+      transform: scale(1.02);
+      box-shadow: 0 6px 20px rgba(180, 80, 120, 0.18);
+    }
+
+    .foto-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    /* Placeholder esqueleto */
+    .skeleton {
+      background: linear-gradient(90deg, #F0E0E8 25%, #F8ECF0 50%, #F0E0E8 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.4s infinite;
+      border-radius: 14px;
+      aspect-ratio: 1;
+    }
+
+    @keyframes shimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    /* Estado vacío / cargando */
+    .estado {
+      text-align: center;
+      padding: 40px 20px;
+    }
+
+    .estado-titulo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 22px;
+      font-style: italic;
+      color: #B87494;
+      margin-bottom: 8px;
+    }
+
+    .estado-texto {
+      font-size: 13px;
+      font-weight: 300;
+      color: #CCA8BC;
+      line-height: 1.7;
+    }
 
     /* Lightbox */
-    #lightbox {
+    .lightbox {
       display: none;
       position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0,0,0,0.9);
+      inset: 0;
+      background: rgba(60, 15, 30, 0.92);
+      z-index: 999;
       justify-content: center;
       align-items: center;
-      z-index: 999;
+      padding: 20px;
     }
-    #lightbox.activo { display: flex; }
-    #lightbox img {
-      max-width: 90%;
-      max-height: 90%;
-      border-radius: 8px;
+
+    .lightbox.activo {
+      display: flex;
     }
-    #cerrar {
+
+    .lightbox img {
+      max-width: 100%;
+      max-height: 90vh;
+      border-radius: 16px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+      object-fit: contain;
+    }
+
+    .lightbox-cerrar {
       position: fixed;
-      top: 20px; right: 30px;
-      color: white;
-      font-size: 40px;
+      top: 20px;
+      right: 24px;
+      width: 36px;
+      height: 36px;
+      background: rgba(255,255,255,0.15);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       cursor: pointer;
+      color: white;
+      font-size: 18px;
+      backdrop-filter: blur(4px);
+      transition: background 0.2s;
+    }
+
+    .lightbox-cerrar:hover {
+      background: rgba(255,255,255,0.28);
+    }
+
+    /* Nav lightbox */
+    .lightbox-nav {
+      position: fixed;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 36px;
+      height: 36px;
+      background: rgba(255,255,255,0.15);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: white;
+      font-size: 18px;
+      backdrop-filter: blur(4px);
+      transition: background 0.2s;
+      user-select: none;
+    }
+
+    .lightbox-nav:hover { background: rgba(255,255,255,0.28); }
+    .lightbox-prev { left: 16px; }
+    .lightbox-next { right: 16px; }
+
+    .footer-text {
+      margin-top: 40px;
+      font-size: 10px;
+      color: #D8B8CC;
+      letter-spacing: 2px;
+      text-transform: uppercase;
     }
   </style>
 </head>
 <body>
-  <h1>📸 Álbum del evento</h1>
-  <div id="galeria"></div>
-  <p id="mensaje">Cargando fotos...</p>
 
-  <div id="lightbox">
-    <span id="cerrar">&times;</span>
-    <img id="lightbox-img" src="" alt="Foto ampliada">
+  <div class="top-decoration">
+    <svg width="200" height="90" viewBox="0 0 200 90" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- OSTIA -->
+      <circle cx="100" cy="12" r="11" fill="#EDD8E8" opacity="0.9"/>
+      <circle cx="100" cy="12" r="8" fill="#F4E4EE" opacity="0.7"/>
+      <circle cx="100" cy="12" r="5.5" fill="#EDD0DE" opacity="0.5"/>
+      <path d="M100 6.5 L100 17.5" stroke="#C897B4" stroke-width="1.2" stroke-linecap="round" opacity="0.8"/>
+      <path d="M94.5 12 L105.5 12" stroke="#C897B4" stroke-width="1.2" stroke-linecap="round" opacity="0.8"/>
+      <circle cx="89" cy="12" r="1.4" fill="#D8B0C8" opacity="0.5"/>
+      <circle cx="111" cy="12" r="1.4" fill="#D8B0C8" opacity="0.5"/>
+      <circle cx="100" cy="2" r="1.4" fill="#D8B0C8" opacity="0.5"/>
+      <!-- CÁLIZ -->
+      <rect x="83" y="24" width="34" height="5" rx="2.5" fill="#D494B4" opacity="0.85"/>
+      <path d="M85 29 L115 29 L109 51 Q100 55 91 51 Z" fill="#E0A8C4" opacity="0.8"/>
+      <path d="M89 30 Q87 40 90 49" stroke="#F4D8E8" stroke-width="2.2" stroke-linecap="round" opacity="0.55"/>
+      <ellipse cx="100" cy="54" rx="5" ry="3.5" fill="#D494B4" opacity="0.85"/>
+      <rect x="98" y="51" width="4" height="13" rx="1.5" fill="#D494B4" opacity="0.8"/>
+      <path d="M87 65 Q100 70 113 65 L113 61 Q100 66 87 61 Z" fill="#D494B4" opacity="0.75"/>
+      <rect x="87" y="60" width="26" height="5" rx="2.5" fill="#D494B4" opacity="0.85"/>
+    </svg>
+
+    <p class="subtitle">Primera Comunión</p>
+    <h1 class="name">Gianna</h1>
+    <p class="album-label">Álbum de recuerdos</p>
+
+    <div class="divider">
+      <div class="divider-line"></div>
+      <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+        <circle cx="5" cy="5" r="3" fill="#C97D9A"/>
+        <circle cx="5" cy="5" r="1.5" fill="#F0C8D8"/>
+      </svg>
+      <div class="divider-line r"></div>
+    </div>
+
+    <p class="date">16 · Mayo · 2026</p>
   </div>
 
+  <p class="photo-count" id="contador"></p>
+
+  <div class="galeria" id="galeria">
+    <!-- Skeletons mientras carga -->
+    <div class="skeleton"></div>
+    <div class="skeleton"></div>
+    <div class="skeleton"></div>
+    <div class="skeleton"></div>
+  </div>
+
+  <div class="estado" id="estado" style="display:none"></div>
+
+  <!-- Lightbox -->
+  <div class="lightbox" id="lightbox" onclick="cerrarSiFondo(event)">
+    <div class="lightbox-cerrar" onclick="cerrarLightbox()">✕</div>
+    <div class="lightbox-nav lightbox-prev" onclick="navegar(-1)">‹</div>
+    <img id="lightbox-img" src="" alt="Foto ampliada">
+    <div class="lightbox-nav lightbox-next" onclick="navegar(1)">›</div>
+  </div>
+
+  <p class="footer-text">Con amor · Gianna 2026</p>
+
   <script>
+    let fotos = [];
+    let indiceActual = 0;
+
     fetch('/api/photos')
       .then(res => res.json())
-      .then(fotos => {
+      .then(data => {
+        fotos = data;
         const galeria = document.getElementById('galeria');
-        const mensaje = document.getElementById('mensaje');
+        const estado = document.getElementById('estado');
+        const contador = document.getElementById('contador');
+
+        galeria.innerHTML = '';
 
         if (fotos.length === 0) {
-          mensaje.textContent = 'Todavía no hay fotos. ¡Sé el primero!';
+          galeria.style.display = 'none';
+          estado.style.display = 'block';
+          estado.innerHTML = `
+            <p class="estado-titulo">Aún no hay fotos</p>
+            <p class="estado-texto">¡Sé el primero en subir<br>un recuerdo de este día!</p>
+          `;
           return;
         }
 
-        mensaje.textContent = '';
-        fotos.forEach(foto => {
+        contador.textContent = fotos.length === 1
+          ? '1 recuerdo'
+          : `${fotos.length} recuerdos`;
+
+        fotos.forEach((foto, i) => {
+          const item = document.createElement('div');
+          item.className = 'foto-item';
           const img = document.createElement('img');
           img.src = foto.secure_url;
           img.alt = 'Foto del evento';
-          img.onclick = () => abrirLightbox(foto.secure_url);
-          galeria.appendChild(img);
+          img.loading = 'lazy';
+          img.onclick = () => abrirLightbox(i);
+          item.appendChild(img);
+          galeria.appendChild(item);
         });
       })
       .catch(() => {
-        document.getElementById('mensaje').textContent = 'Error cargando las fotos.';
+        document.getElementById('galeria').innerHTML = '';
+        document.getElementById('galeria').style.display = 'none';
+        const estado = document.getElementById('estado');
+        estado.style.display = 'block';
+        estado.innerHTML = `
+          <p class="estado-titulo">Algo ha ido mal</p>
+          <p class="estado-texto">No se han podido cargar las fotos.<br>Inténtalo de nuevo.</p>
+        `;
       });
 
-    function abrirLightbox(url) {
-      document.getElementById('lightbox-img').src = url;
+    function abrirLightbox(i) {
+      indiceActual = i;
+      document.getElementById('lightbox-img').src = fotos[i].secure_url;
       document.getElementById('lightbox').classList.add('activo');
     }
 
-    document.getElementById('cerrar').onclick = () => {
+    function cerrarLightbox() {
       document.getElementById('lightbox').classList.remove('activo');
-    };
+    }
 
-    document.getElementById('lightbox').onclick = (e) => {
-      if (e.target === document.getElementById('lightbox')) {
-        document.getElementById('lightbox').classList.remove('activo');
-      }
-    };
+    function cerrarSiFondo(e) {
+      if (e.target === document.getElementById('lightbox')) cerrarLightbox();
+    }
+
+    function navegar(dir) {
+      indiceActual = (indiceActual + dir + fotos.length) % fotos.length;
+      document.getElementById('lightbox-img').src = fotos[indiceActual].secure_url;
+    }
+
+    document.addEventListener('keydown', e => {
+      if (!document.getElementById('lightbox').classList.contains('activo')) return;
+      if (e.key === 'ArrowRight') navegar(1);
+      if (e.key === 'ArrowLeft') navegar(-1);
+      if (e.key === 'Escape') cerrarLightbox();
+    });
   </script>
+
 </body>
 </html>
