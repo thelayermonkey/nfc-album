@@ -244,7 +244,45 @@
       letter-spacing: 2px;
       text-transform: uppercase;
     }
-  </style>
+    .preview-grid {
+      display: none;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-top: 12px;
+      margin-bottom: 12px;
+    }
+
+    .preview-item {
+      position: relative;
+      aspect-ratio: 1;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .preview-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .preview-item .quitar {
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      width: 20px;
+      height: 20px;
+      background: rgba(122, 46, 75, 0.75);
+      border-radius: 50%;
+      color: white;
+      font-size: 11px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      line-height: 1;
+    }
+  
 </head>
 <body>
 
@@ -319,9 +357,11 @@
       </div>
     </div>
 
-    <input type="file" id="archivo" accept="image/*">
+    <input type="file" id="archivo" accept="image/*" multiple>
 
-    <button class="btn" id="btnSubir" onclick="subirFoto()" disabled>
+    <div class="preview-grid" id="previewGrid"></div>
+
+    <button class="btn" id="btnSubir" onclick="subirFotos()" disabled>
       Subir foto
     </button>
 
@@ -337,76 +377,118 @@
   <script>
     const input = document.getElementById('archivo');
     const btn = document.getElementById('btnSubir');
-    const previewContainer = document.getElementById('previewContainer');
-    const previewImg = document.getElementById('previewImg');
     const uploadArea = document.getElementById('uploadArea');
+    const previewGrid = document.getElementById('previewGrid');
     const mensaje = document.getElementById('mensaje');
     const progressBar = document.getElementById('progressBar');
     const progressFill = document.getElementById('progressFill');
 
+    let archivosSeleccionados = [];
+
     input.addEventListener('change', function () {
-      const file = this.files[0];
-      if (!file) return;
+      const nuevos = Array.from(this.files);
+      if (!nuevos.length) return;
 
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        previewImg.src = e.target.result;
-        previewContainer.style.display = 'block';
-        uploadArea.classList.add('has-file');
-      };
-      reader.readAsDataURL(file);
+      nuevos.forEach(file => {
+        if (!archivosSeleccionados.find(f => f.name === file.name && f.size === file.size)) {
+          archivosSeleccionados.push(file);
+        }
+      });
 
-      btn.disabled = false;
+      actualizarPreviews();
       mensaje.textContent = '';
       mensaje.className = 'mensaje';
+      // Reset input so same file can be re-added after removal
+      input.value = '';
     });
 
-    async function subirFoto() {
-      const file = input.files[0];
-      if (!file) return;
+    function actualizarPreviews() {
+      previewGrid.innerHTML = '';
+
+      if (archivosSeleccionados.length === 0) {
+        previewGrid.style.display = 'none';
+        uploadArea.classList.remove('has-file');
+        btn.disabled = true;
+        btn.textContent = 'Subir foto';
+        return;
+      }
+
+      previewGrid.style.display = 'grid';
+      uploadArea.classList.add('has-file');
+      btn.disabled = false;
+      btn.textContent = archivosSeleccionados.length === 1
+        ? 'Subir 1 foto'
+        : `Subir ${archivosSeleccionados.length} fotos`;
+
+      archivosSeleccionados.forEach((file, i) => {
+        const item = document.createElement('div');
+        item.className = 'preview-item';
+
+        const img = document.createElement('img');
+        const reader = new FileReader();
+        reader.onload = e => img.src = e.target.result;
+        reader.readAsDataURL(file);
+
+        const quitar = document.createElement('div');
+        quitar.className = 'quitar';
+        quitar.textContent = '✕';
+        quitar.onclick = () => {
+          archivosSeleccionados.splice(i, 1);
+          actualizarPreviews();
+        };
+
+        item.appendChild(img);
+        item.appendChild(quitar);
+        previewGrid.appendChild(item);
+      });
+    }
+
+    async function subirFotos() {
+      if (!archivosSeleccionados.length) return;
 
       btn.disabled = true;
-      btn.textContent = 'Subiendo...';
       progressBar.style.display = 'block';
       mensaje.textContent = '';
 
-      let prog = 0;
-      const interval = setInterval(() => {
-        prog = Math.min(prog + Math.random() * 18, 88);
-        progressFill.style.width = prog + '%';
-      }, 200);
+      const total = archivosSeleccionados.length;
+      let subidas = 0;
+      let errores = 0;
 
-      const formData = new FormData();
-      formData.append('file', file);
-      formData.append('upload_preset', 'gianna');
+      for (const file of archivosSeleccionados) {
+        btn.textContent = `Subiendo ${subidas + 1} de ${total}...`;
+        progressFill.style.width = ((subidas / total) * 100) + '%';
 
-      try {
-        const res = await fetch('https://api.cloudinary.com/v1_1/dc39zjuoi/image/upload', {
-          method: 'POST',
-          body: formData
-        });
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('upload_preset', 'gianna');
 
-        clearInterval(interval);
-        progressFill.style.width = '100%';
-
-        if (res.ok) {
-          setTimeout(() => {
-            progressBar.style.display = 'none';
-            btn.textContent = '✓  Foto guardada';
-            mensaje.textContent = '🌸 ¡Gracias! Tu recuerdo ya forma parte del álbum de Gianna';
-            mensaje.className = 'mensaje exito';
-          }, 500);
-        } else {
-          throw new Error();
+        try {
+          const res = await fetch('https://api.cloudinary.com/v1_1/dc39zjuoi/image/upload', {
+            method: 'POST',
+            body: formData
+          });
+          if (res.ok) subidas++;
+          else errores++;
+        } catch {
+          errores++;
         }
-      } catch {
-        clearInterval(interval);
-        progressBar.style.display = 'none';
-        btn.disabled = false;
-        btn.textContent = 'Subir foto';
-        mensaje.textContent = 'Algo ha ido mal. Inténtalo de nuevo.';
-        mensaje.className = 'mensaje error';
       }
+
+      progressFill.style.width = '100%';
+
+      setTimeout(() => {
+        progressBar.style.display = 'none';
+        if (errores === 0) {
+          btn.textContent = `✓  ${total === 1 ? 'Foto guardada' : total + ' fotos guardadas'}`;
+          mensaje.textContent = '🌸 ¡Gracias! Tus recuerdos ya forman parte del álbum de Gianna';
+          mensaje.className = 'mensaje exito';
+        } else {
+          btn.textContent = 'Reintentar';
+          btn.disabled = false;
+          mensaje.textContent = `${subidas} subidas correctamente, ${errores} han fallado. Inténtalo de nuevo.`;
+          mensaje.className = 'mensaje error';
+        }
+      }, 500);
     }
   </script>
 
